@@ -1,0 +1,6 @@
+01_support-non-multiarch-modules.patch
+git-xfdesktop-4.11.patch
+gtk3-bookmarks.patch
+git-save-keyboard-shortcuts.patch
+menu-icon-tweaks.patch
+git-force-toolbr-icons.patch
