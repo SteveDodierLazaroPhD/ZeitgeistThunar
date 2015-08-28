@@ -4,3 +4,4 @@ gtk3-bookmarks.patch
 git-save-keyboard-shortcuts.patch
 menu-icon-tweaks.patch
 git-force-toolbr-icons.patch
+ucl_add_missing_xml.diff
