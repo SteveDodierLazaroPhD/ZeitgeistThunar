@@ -214,7 +214,11 @@ thunar_SOURCES =							\
 	thunar-view.h							\
 	thunar-window.c							\
 	thunar-window.h							\
-	thunar-window-ui.h
+	thunar-window-ui.h					\
+	logger.c										\
+	logger.h										\
+	zeitgeist_manager.c					\
+	zeitgeist_manager.h
 
 thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
@@ -226,6 +230,7 @@ thunar_CFLAGS =								\
 	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(XFCONF_CFLAGS)						\
+	$(LIBZEITGEIST_CFLAGS)            \
 	$(PLATFORM_CFLAGS)
 
 thunar_LDFLAGS =							\
@@ -243,7 +248,8 @@ thunar_LDADD =								\
 	$(LIBSM_LIBS)							\
 	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
 	$(LIBXFCE4UI_LIBS)						\
-	$(XFCONF_LIBS)
+	$(XFCONF_LIBS)						\
+	$(LIBZEITGEIST_LIBS)
 
 thunar_DEPENDENCIES =							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la

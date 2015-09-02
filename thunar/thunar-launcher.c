@@ -44,6 +44,7 @@
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-window.h>
 
+#include "logger.h"
 
 
 typedef struct _ThunarLauncherMountData ThunarLauncherMountData;
@@ -588,6 +589,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
   GHashTable *applications;
   GAppInfo   *app_info;
   GList      *file_list;
+  GList      *log_list;
   GList      *lp;
 
   /* allocate a hash table to associate applications to URIs. since GIO allocates
@@ -627,9 +629,14 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
           thunar_show_chooser_dialog (launcher->widget, lp->data, TRUE);
           break;
         }
+      
+        log_list = g_list_append (log_list, thunar_file_get_file (lp->data));
     }
 
   /* run all collected applications */
+  log_open_files (NULL, log_list);
+  g_list_free (log_list);
+  
   g_hash_table_foreach (applications, (GHFunc) thunar_launcher_open_paths, launcher);
 
   /* drop the applications hash table */
@@ -643,6 +650,7 @@ thunar_launcher_open_paths (GAppInfo       *app_info,
                             GList          *path_list,
                             ThunarLauncher *launcher)
 {
+  log_open_files (app_info, path_list);
   GdkAppLaunchContext *context;
   GdkScreen           *screen;
   GError              *error = NULL;

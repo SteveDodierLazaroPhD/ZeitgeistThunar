@@ -253,6 +253,7 @@ ThunarJob *
 thunar_io_jobs_create_files (GList *file_list,
                              GFile *template_file)
 {
+  log_create (file_list);
   return thunar_simple_job_launch (_thunar_io_jobs_create, 2,
                                    THUNAR_TYPE_G_FILE_LIST, file_list,
                                    G_TYPE_FILE, template_file);
@@ -390,6 +391,7 @@ again:
 ThunarJob *
 thunar_io_jobs_make_directories (GList *file_list)
 {
+  log_mkdir (file_list);
   return thunar_simple_job_launch (_thunar_io_jobs_mkdir, 1,
                                    THUNAR_TYPE_G_FILE_LIST, file_list);
 }
@@ -523,6 +525,7 @@ again:
 ThunarJob *
 thunar_io_jobs_unlink_files (GList *file_list)
 {
+  log_unlink (file_list);
   return thunar_simple_job_launch (_thunar_io_jobs_unlink, 1,
                                    THUNAR_TYPE_G_FILE_LIST, file_list);
 }
@@ -846,6 +849,8 @@ ThunarJob *
 thunar_io_jobs_trash_files (GList *file_list)
 {
   _thunar_return_val_if_fail (file_list != NULL, NULL);
+
+  log_trash (file_list);
 
   return thunar_simple_job_launch (_thunar_io_jobs_trash, 1,
                                    THUNAR_TYPE_G_FILE_LIST, file_list);

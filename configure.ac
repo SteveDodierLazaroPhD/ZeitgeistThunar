@@ -153,6 +153,7 @@ XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.14.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.10.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-1], [4.10.0])
 XDT_CHECK_PACKAGE([XFCONF], [libxfconf-0], [4.10.0])
+XDT_CHECK_PACKAGE([LIBZEITGEIST], [zeitgeist-1.0], [0.3])
 
 dnl ********************************************
 dnl *** Check for session management support ***

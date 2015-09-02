@@ -1,3 +1,9 @@
+thunar (1.6.3-1ubuntu5ppa1) trusty; urgency=medium
+
+  * Add UCL events
+
+ -- Steve Dodier-Lazaro <sidnioulz@gmail.com>  Wed, 02 Sep 2015 15:56:00 +0100
+
 thunar (1.6.3-1ubuntu5) trusty; urgency=medium
 
   * Add git-save-keyboard-shortcuts.patch. LP: #1186846

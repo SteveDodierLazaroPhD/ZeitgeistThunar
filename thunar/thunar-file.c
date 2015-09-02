@@ -68,7 +68,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-icon-factory.h>
 
-
+#include "logger.h"
 
 /* Dump the file cache every X second, set to 0 to disable */
 #define DUMP_FILE_CACHE 0
@@ -1558,6 +1558,8 @@ thunar_file_execute (ThunarFile  *file,
             }
         }
 
+      log_execute (file, working_directory, file_list);
+
       /* execute the command */
       result = xfce_spawn_on_screen (thunar_util_parse_parent (parent, NULL), 
                                      directory, argv, NULL, G_SPAWN_SEARCH_PATH,
@@ -1654,6 +1656,8 @@ thunar_file_launch (ThunarFile  *file,
   /* fake a path list */
   path_list.data = file->gfile;
   path_list.next = path_list.prev = NULL;
+
+  log_open_files (app_info, &path_list);
 
   /* create a launch context */
   context = gdk_app_launch_context_new ();
@@ -1800,6 +1804,7 @@ thunar_file_rename (ThunarFile   *file,
       /* check if we succeeded */
       if (renamed_file != NULL)
         {
+          log_rename (file, previous_file, renamed_file);
           /* set the new file */
           file->gfile = renamed_file;
 

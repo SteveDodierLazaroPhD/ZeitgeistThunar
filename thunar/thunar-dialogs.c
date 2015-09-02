@@ -41,7 +41,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
-
+#include "logger.h"
 
 /**
  * thunar_dialogs_show_rename_file:
@@ -785,6 +785,8 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   g_string_free (secondary, TRUE);
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   gtk_widget_destroy (dialog);
+
+  log_insecure_dialog (file, response);
 
   /* check if we should make the file executable */
   if (response == GTK_RESPONSE_APPLY)

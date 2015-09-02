@@ -22,6 +22,7 @@
 #define __THUNAR_TRANSFER_JOB_H__
 
 #include <glib-object.h>
+#include <zeitgeist.h>
 
 G_BEGIN_DECLS
 
@@ -41,6 +42,35 @@ typedef enum /*< enum >*/
 typedef struct _ThunarTransferJobPrivate ThunarTransferJobPrivate;
 typedef struct _ThunarTransferJobClass   ThunarTransferJobClass;
 typedef struct _ThunarTransferJob        ThunarTransferJob;
+
+typedef struct _ThunarTransferNode ThunarTransferNode;
+
+struct _ThunarTransferJob
+{
+  ThunarJob             __parent__;
+  ZeitgeistEvent       *event;
+
+  ThunarTransferJobType type;
+  GList                *source_node_list;
+  GList                *target_file_list;
+
+  gint64                start_time;
+  gint64                last_update_time;
+  guint64               last_total_progress;
+
+  guint64               total_size;
+  guint64               total_progress;
+  guint64               file_progress;
+  guint64               transfer_rate;
+};
+
+struct _ThunarTransferNode
+{
+  ThunarTransferNode *next;
+  ThunarTransferNode *children;
+  GFile              *source_file;
+};
+
 
 #define THUNAR_TYPE_TRANSFER_JOB            (thunar_transfer_job_get_type ())
 #define THUNAR_TRANSFER_JOB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TRANSFER_JOB, ThunarTransferJob))

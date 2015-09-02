@@ -34,7 +34,7 @@
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
 
-
+#include "logger.h"
 
 /* seconds before we show the transfer rate + remaining time */
 #define MINIMUM_TRANSFER_TIME (10 * G_USEC_PER_SEC) /* 10 seconds */
@@ -57,36 +57,7 @@ struct _ThunarTransferJobClass
   ThunarJobClass __parent__;
 };
 
-struct _ThunarTransferJob
-{
-  ThunarJob             __parent__;
-
-  ThunarTransferJobType type;
-  GList                *source_node_list;
-  GList                *target_file_list;
-
-  gint64                start_time;
-  gint64                last_update_time;
-  guint64               last_total_progress;
-
-  guint64               total_size;
-  guint64               total_progress;
-  guint64               file_progress;
-  guint64               transfer_rate;
-};
-
-struct _ThunarTransferNode
-{
-  ThunarTransferNode *next;
-  ThunarTransferNode *children;
-  GFile              *source_file;
-};
-
-
-
 G_DEFINE_TYPE (ThunarTransferJob, thunar_transfer_job, THUNAR_TYPE_JOB)
-
-
 
 static void
 thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
@@ -601,6 +572,7 @@ retry_copy:
                   *target_file_list_return =
                     thunar_g_file_list_prepend (*target_file_list_return,
                                                 real_target_file);
+                  log_transfer_add_node (job, node, real_target_file);
                 }
 
 retry_remove:
@@ -791,6 +763,8 @@ thunar_transfer_job_execute (ExoJob  *job,
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
 
+  log_transfer_init (transfer_job);
+
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
        sp = snext, tp = tnext)
@@ -906,6 +880,9 @@ thunar_transfer_job_execute (ExoJob  *job,
               /* add the target file to the new files list */
               new_files_list = thunar_g_file_list_prepend (new_files_list, tp->data);
 
+              fprintf (stderr, "%p %p %p %p\n", transfer_job, transfer_job->event, node, tp->data);
+              log_transfer_add_node (transfer_job, node, tp->data);
+
               /* release source and target files */
               thunar_transfer_node_free (node);
               g_object_unref (tp->data);
@@ -949,6 +926,7 @@ thunar_transfer_job_execute (ExoJob  *job,
       /* check destination */
       if (!thunar_transfer_job_veryify_destination (transfer_job, &err))
         {
+          log_transfer_cleanup (transfer_job);
           if (err != NULL)
             {
               g_propagate_error (error, err);
@@ -977,11 +955,14 @@ thunar_transfer_job_execute (ExoJob  *job,
   /* check if we failed */
   if (G_UNLIKELY (err != NULL))
     {
+      log_transfer_cleanup (transfer_job);
       g_propagate_error (error, err);
       return FALSE;
     }
   else
     {
+      log_transfer_finish (transfer_job);
+      log_transfer_cleanup (transfer_job);
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
       thunar_g_file_list_free (new_files_list);
       return TRUE;
@@ -1034,6 +1015,7 @@ thunar_transfer_job_new (GList                *source_node_list,
 
   job = g_object_new (THUNAR_TYPE_TRANSFER_JOB, NULL);
   job->type = type;
+  job->event = NULL;
 
   /* add a transfer node for each source path and a matching target parent path */
   for (sp = source_node_list, tp = target_file_list;

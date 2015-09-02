@@ -39,7 +39,7 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
 
-
+#include "logger.h"
 
 /* Property identifiers */
 enum
@@ -484,6 +484,8 @@ thunar_chooser_dialog_response (GtkDialog *widget,
 
       /* create fake file list */
       list.data = thunar_file_get_file (dialog->file); list.next = list.prev = NULL;
+
+      log_open_files (app_info, &list);
 
       if (!g_app_info_launch (app_info, &list, G_APP_LAUNCH_CONTEXT (context), &error))
         {
